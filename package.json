@@ -1,0 +1,21 @@
+{
+  "name": "talabat-bot",
+  "version": "1.0.0",
+  "description": "A telegram bot to scrape Talabat to tell when restaurant is opened",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "talabat",
+    "scraping",
+    "bot",
+    "telegram"
+  ],
+  "author": "Mohamed Magid",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1"
+  }
+}
