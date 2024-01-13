@@ -5,7 +5,7 @@ const getRestaurantStatus = async (url) => {
     try {
       return await puppeteer.launch({
           headless:false,
-          args: ["--no-sandbox"]
+          args: ["--no-sandbox", "--disabled-setupid-sandbox", "--disable-gpu"]
       }).then(async browser => {
             const page = await browser.newPage();
             await page.setViewport({width: 800, height: 600});
