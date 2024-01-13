@@ -3,7 +3,10 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 const getRestaurantStatus = async (url) => {
     try {
-      return await puppeteer.launch({ headless: true }).then(async browser => {
+      return await puppeteer.launch({
+          headless:false,
+          args: ["--no-sandbox"]
+      }).then(async browser => {
             const page = await browser.newPage();
             await page.setViewport({width: 800, height: 600});
             await page.goto(url);
