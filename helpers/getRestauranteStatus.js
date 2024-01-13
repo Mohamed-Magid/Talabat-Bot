@@ -1,22 +1,22 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const fs = require('fs')
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
 const getRestaurantStatus = async (url) => {
     try {
-        const response = await axios.get(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-            }
-
+      return await puppeteer.launch({ headless: true }).then(async browser => {
+            const page = await browser.newPage();
+            await page.setViewport({width: 800, height: 600});
+            await page.goto(url);
+            await page.waitForSelector('span[data-testid="rest-status"]');
+            const status = await page.$eval('span[data-testid="rest-status"]', el => el.innerText.trim());
+            console.log(status);
+            await browser.close();
+            const busyStrings = ['مشغول', 'busy', 'closed', 'مغلق'];
+            return !busyStrings.includes(status.toLowerCase());
         });
-        fs.writeFileSync('test.html', response.data);
-        const $ = cheerio.load(response.data);
-        const busyStrings = ['مشغول', 'busy', 'closed', 'مغلق'];
-        const status = $('span[data-testid="rest-status"]').text().trim();
-        return !busyStrings.includes(status.toLowerCase());
-    } catch (error) {
-        console.log(error);
+    } catch (e) {
+        console.log(e);
+        return false;
     }
-}
-
+};
 module.exports = getRestaurantStatus;
