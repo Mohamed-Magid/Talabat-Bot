@@ -18,7 +18,7 @@ bot.on('text', async (msg) => {
             } else {
                 console.log("Restaurant is still closed");
             }
-        },10000);
+        },1000*60*5);
 
     } else if (msg.text === 'stop') {
         clearInterval(intervalID);
