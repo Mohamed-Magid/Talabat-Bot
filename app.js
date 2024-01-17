@@ -12,7 +12,6 @@ bot.on('text', async (msg) => {
     if (isValidTalabatURL(msg.text)) {
         intervalID = setInterval(async () => {
             let isOpen = await getRestaurantStatus(msg.text);
-            console.log(isOpen);
             if (isOpen) {
                 msg.reply.text("Restaurant is now open");
                 clearInterval(intervalID);

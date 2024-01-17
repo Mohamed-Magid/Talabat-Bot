@@ -4,7 +4,7 @@ puppeteer.use(StealthPlugin())
 const getRestaurantStatus = async (url) => {
     try {
       return await puppeteer.launch({
-          headless:false,
+          headless:true,
           args: ["--no-sandbox", "--disabled-setupid-sandbox", "--disable-gpu"]
       }).then(async browser => {
             const page = await browser.newPage();
@@ -12,7 +12,6 @@ const getRestaurantStatus = async (url) => {
             await page.goto(url);
             await page.waitForSelector('span[data-testid="rest-status"]');
             const status = await page.$eval('span[data-testid="rest-status"]', el => el.innerText.trim());
-            console.log(status);
             await browser.close();
             const busyStrings = ['مشغول', 'busy', 'closed', 'مغلق'];
             return !busyStrings.includes(status.toLowerCase());
