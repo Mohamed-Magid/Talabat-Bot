@@ -15,12 +15,9 @@
   "author": "Mohamed Magid",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.4.0",
-    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "mongoose": "^8.1.0",
     "node-cron": "^3.0.3",
-    "nodemon": "^3.0.1",
     "puppeteer": "^21.7.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
