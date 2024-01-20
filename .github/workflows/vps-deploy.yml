@@ -14,18 +14,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t talabat-bot .
+        run: docker build -t your-image-name .
 
       - name: SSH into VPS and recreate container
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_SSH_PORT }}
+          password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            cd ../home/apps/Talabat-Bot
             docker stop talabat-bot-container || true
             docker rm talabat-bot-container || true
             docker rmi talabat-bot || true
-            docker build -t talabat-bot .
-            docker run -p 3000:3000 -d --restart always --name talabat-bot-container talabat-bot
+            docker build -t your-image-name .
+            docker run -p 5000:5000 -d --restart always --name talabat-bot-container talabat-bot
