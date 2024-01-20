@@ -18,7 +18,13 @@ const checkRestaurantsStatus = async () => {
         request.restaurantName = info.restaurantName;
         request.nOfTries++;
         await request.save();
-        if (info.restaurantStatus) {
+        if (!info){
+            bot.sendMessage(request.chatId, `Something went wrong while pinging the restaurant, we will stop trying to ping it. If you think this was done by mistake please resend the URL.`);
+            request.status = true;
+            request.reported = true;
+            await request.save();
+        }
+        else if (info.restaurantStatus) {
             request.status = true;
             await bot.sendMessage(request.chatId, `🟢 Hey ${request.senderName}, ${info.restaurantName} is now available!`);
             request.reported = true;

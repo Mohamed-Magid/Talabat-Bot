@@ -11,6 +11,7 @@ const getRestaurantInfo = async (url) => {
             const page = await browser.newPage();
             await page.setViewport({width: 800, height: 600});
             await page.goto(url);
+            await page.waitFor(1000);
             await page.waitForSelector('span[data-testid="rest-status"]');
             const status = await page.$eval('span[data-testid="rest-status"]', el => el.innerText.trim());
             const name = await page.$eval('h1[data-testid="restaurant-title"]', el => el.firstChild.nodeValue.trim());
