@@ -1,15 +1,32 @@
 require('dotenv').config();
 const isValidTalabatURL = require('./helpers/isValidTalabatURL');
-const getRestaurantInfo = require('./helpers/getRestauranteInfo');
-const TeleBot = require('telebot');
+const checkRestaurantsStatus = require('./helpers/checkRestaurantsStatus');
+const cron = require('node-cron');
 const Request = require('./models/Requests');
-const bot = new TeleBot({token: process.env.BOT_TOKEN});
+const bot = require('./bot/bot');
 const connectDB = require('./config/connectDB');
 connectDB();
 bot.start();
-let intervalID;
+bot.on('/clear', async (msg) => {
+    const count = await Request.countDocuments({
+        chatId: msg.chat.id,
+        status: false,
+    });
+    await Request.updateMany({
+        chatId: msg.chat.id,
+        status: false,
+    }, {
+        $set: {
+            reported: true,
+            status: true
+        }
+    })
+    msg.reply.text(`Cleared ${count} requests.`);
+});
 bot.on('text', async (msg) => {
+    if (msg.text.startsWith('/')) return;
     if (isValidTalabatURL(msg.text)) {
+        msg.reply.text("Pinging the restaurant every 5 mins, you will be notified when it's available.");
         const request = new Request({
             url: msg.text,
             chatId: msg.chat.id,
@@ -17,20 +34,8 @@ bot.on('text', async (msg) => {
             senderUsername: msg.from.username
         });
         await request.save();
-        intervalID = setInterval(async () => {
-            let info = await getRestaurantInfo(msg.text);
-            if (info.status) {
-                msg.reply.text(`Restaurant ${info.name} is now open`);
-                clearInterval(intervalID);
-            } else {
-                console.log(`Restaurant ${info.name} is still closed`);
-            }
-        },1000*60*5);
-
-    } else if (msg.text === 'stop') {
-        clearInterval(intervalID);
-        msg.reply.text("Stopped");
     } else {
         msg.reply.text("Invalid Talabat URL");
     }
 });
+cron.schedule('*/5 * * * *', checkRestaurantsStatus);

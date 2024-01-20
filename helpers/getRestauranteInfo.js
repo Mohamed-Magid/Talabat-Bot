@@ -4,8 +4,8 @@ puppeteer.use(StealthPlugin())
 const getRestaurantInfo = async (url) => {
     try {
       return await puppeteer.launch({
-          headless:true,
-          executablePath: '/usr/bin/google-chrome',
+          headless: false,
+          // executablePath: '/usr/bin/google-chrome',
           args: ["--no-sandbox", "--disabled-setupid-sandbox", "--disable-gpu"]
       }).then(async browser => {
             const page = await browser.newPage();
@@ -13,8 +13,7 @@ const getRestaurantInfo = async (url) => {
             await page.goto(url);
             await page.waitForSelector('span[data-testid="rest-status"]');
             const status = await page.$eval('span[data-testid="rest-status"]', el => el.innerText.trim());
-            const name = await page.$eval('span[data-testid="restaurant-title"]', el => el.firstChild.nodeValue.trim());
-
+            const name = await page.$eval('h1[data-testid="restaurant-title"]', el => el.firstChild.nodeValue.trim());
             await browser.close();
             const busyStrings = ['مشغول', 'busy', 'closed', 'مغلق'];
           return {
