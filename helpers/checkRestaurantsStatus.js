@@ -14,6 +14,7 @@ const checkRestaurantsStatus = async () => {
             await request.save();
             continue;
         }
+        const info = await getRestaurantInfo(request.url);
         request.restaurantName = info.restaurantName;
         request.nOfTries++;
         await request.save();
