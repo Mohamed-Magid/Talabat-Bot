@@ -38,5 +38,4 @@ bot.on('text', async (msg) => {
         msg.reply.text("Invalid Talabat URL");
     }
 });
-// cron.schedule('*/5 * * * *', checkRestaurantsStatus);
-cron.schedule('* * * * *', checkRestaurantsStatus);
+cron.schedule('*/5 * * * *', checkRestaurantsStatus);
