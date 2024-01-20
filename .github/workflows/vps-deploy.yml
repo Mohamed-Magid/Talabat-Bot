@@ -24,6 +24,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd ../home/apps/Talabat-Bot
+            git pull
             docker stop talabat-bot-container || true
             docker rm talabat-bot-container || true
             docker rmi talabat-bot || true
