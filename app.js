@@ -1,22 +1,29 @@
 require('dotenv').config();
 const isValidTalabatURL = require('./helpers/isValidTalabatURL');
-const getRestaurantStatus = require('./helpers/getRestauranteStatus');
+const getRestaurantInfo = require('./helpers/getRestauranteInfo');
 const TeleBot = require('telebot');
-
+const Request = require('./models/Requests');
 const bot = new TeleBot({token: process.env.BOT_TOKEN});
-
+const connectDB = require('./config/connectDB');
+connectDB();
 bot.start();
-
+let intervalID;
 bot.on('text', async (msg) => {
-    let intervalID;
     if (isValidTalabatURL(msg.text)) {
+        const request = new Request({
+            url: msg.text,
+            chatId: msg.chat.id,
+            senderName: msg.from.first_name + ' ' + msg.from.last_name,
+            senderUsername: msg.from.username
+        });
+        await request.save();
         intervalID = setInterval(async () => {
-            let isOpen = await getRestaurantStatus(msg.text);
-            if (isOpen) {
-                msg.reply.text("Restaurant is now open");
+            let info = await getRestaurantInfo(msg.text);
+            if (info.status) {
+                msg.reply.text(`Restaurant ${info.name} is now open`);
                 clearInterval(intervalID);
             } else {
-                console.log("Restaurant is still closed");
+                console.log(`Restaurant ${info.name} is still closed`);
             }
         },1000*60*5);
 

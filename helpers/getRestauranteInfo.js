@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
-const getRestaurantStatus = async (url) => {
+const getRestaurantInfo = async (url) => {
     try {
       return await puppeteer.launch({
           headless:true,
@@ -13,13 +13,18 @@ const getRestaurantStatus = async (url) => {
             await page.goto(url);
             await page.waitForSelector('span[data-testid="rest-status"]');
             const status = await page.$eval('span[data-testid="rest-status"]', el => el.innerText.trim());
+            const name = await page.$eval('span[data-testid="restaurant-title"]', el => el.firstChild.nodeValue.trim());
+
             await browser.close();
             const busyStrings = ['مشغول', 'busy', 'closed', 'مغلق'];
-            return !busyStrings.includes(status.toLowerCase());
+          return {
+              restaurantName: name,
+              restaurantStatus: !busyStrings.includes(status.toLowerCase())
+          };
         });
     } catch (e) {
         console.log(e);
         return false;
     }
 };
-module.exports = getRestaurantStatus;
+module.exports = getRestaurantInfo;
