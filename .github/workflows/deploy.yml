@@ -1,0 +1,28 @@
+name: Docker Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: SSH into VPS and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd ../home/apps/Talabat-Bot
+            git pull
+            docker stop talabat-bot-container || true
+            docker rm talabat-bot-container || true
+            docker rmi talabat-bot || true
+            docker build -t talabat-bot .
+            docker run -p 5000:5000 -d --restart always --name talabat-bot-container talabat-bot
