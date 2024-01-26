@@ -39,5 +39,3 @@ bot.on('text', async (msg) => {
     }
 });
 cron.schedule('*/5 * * * *', checkRestaurantsStatus);
-
-// for testing auto deploy

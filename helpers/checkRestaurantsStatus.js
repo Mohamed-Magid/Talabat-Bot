@@ -8,7 +8,7 @@ const checkRestaurantsStatus = async () => {
     const requests = await Requests.find({status: false});
     for (let request of requests){
         if (request.nOfTries >= 50) {
-            await bot.sendMessage(request.chatId, `🔴🔴 Hey ${request.senderName}, ${request.restaurantName} is unavailable for a long time!, we are going to stop pinging it.`);
+            await bot.sendMessage(request.chatId, `🔴 Hey ${request.senderName}, ${request.restaurantName} is unavailable for a long time!, we are going to stop pinging it.`);
             request.status = true;
             request.reported = true;
             await request.save();
@@ -29,9 +29,6 @@ const checkRestaurantsStatus = async () => {
             await bot.sendMessage(request.chatId, `🟢 Hey ${request.senderName}, ${info.restaurantName} is now available!`);
             request.reported = true;
             await request.save();
-        }
-        else {
-            bot.sendMessage(request.chatId, `🔴 Hey ${request.senderName}, ${info.restaurantName} is still unavailable!`);
         }
     }
 }
